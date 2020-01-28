@@ -12,9 +12,12 @@ import com.codingwithmitch.flowexamples.StateEvent.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
 
+@FlowPreview
+@InternalCoroutinesApi
 @ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity() {
 
@@ -33,18 +36,61 @@ class MainActivity : AppCompatActivity() {
 
         subscribeObservers()
 
-        viewModel.setStateEvent(GetObject1())
+
+        get_object_1.setOnClickListener {
+            get_object_1.text = ""
+            viewModel.setStateEvent(GetObject1())
+        }
+
+        get_object_2.setOnClickListener {
+            get_object_2.text = ""
+            viewModel.setStateEvent(GetObject2())
+        }
+
+        get_object_3.setOnClickListener {
+            get_object_3.text = ""
+            viewModel.setStateEvent(GetObject3())
+        }
     }
 
     private fun subscribeObservers(){
 
+        CoroutineScope(Main).launch{
+            viewModel.channel.asFlow().flowOn(Main).collect(object: FlowCollector<DataState<ViewState>>{
+
+                override suspend fun emit(value: DataState<ViewState>) {
+                    Log.d(TAG, "MainActivity: emit: ${value}")
+
+                    displayProgressBar(value.loading.isLoading)
+
+                    value.data?.getContentIfNotHandled()?.let { data ->
+                        viewModel.handleNewData(data)
+                    }
+                }
+
+            })
+        }
+
+        viewModel.viewState.observe(this, Observer { viewState ->
+            if(viewState != null){
+
+                viewState.object1?.let { object1 ->
+                    get_object_1.text = object1
+                }
+
+                viewState.object2?.let { object2 ->
+                    get_object_2.text = object2
+                }
+
+                viewState.object3?.let { object3 ->
+                    get_object_3.text = object3
+                }
+            }
+        })
+
+
         viewModel.dataState.observe(this, Observer { dataState ->
 
-            if(dataState != null){
-                Log.d(TAG, "dataState: ${dataState}")
-
-                displayProgressBar(dataState.loading.isLoading)
-            }
         })
     }
 
