@@ -5,7 +5,7 @@ I made this example as a playground to get familiar with Kotlin Channels and Flo
 
 Additionally, I was hoping to solve an issue with the way I make requests using MVI architecture. I use a switchmap to detect new StateEvents which then execute the corresponding request in repository layer.
 
-example
+**example**
 ```java
 val dataState: LiveData<DataState<ViewState>> = Transformations
     .switchMap(_stateEvent){ stateEvent ->
@@ -16,7 +16,7 @@ val dataState: LiveData<DataState<ViewState>> = Transformations
 ```
 The problem with doing it this way is only one request can be executing at any given time. So any concurrency is pretty much out of the question without some serious refactoring. Everything else about this works great so I didn't want to trash it completely.
 
-##TODO
+## TODO
 I'm very new to Channels and Flows. Any feedback on my use case would be appreciated.
 1. Do I need to "cleanup" anything? Or will the channel be destroyed with the viewModelScope?
 2. What about the flows? Any cleanup required?
