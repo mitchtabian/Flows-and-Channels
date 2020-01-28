@@ -1,4 +1,4 @@
-package com.codingwithmitch.flowexamples
+package com.codingwithmitch.flowexamples.ui.state
 
 data class ViewState(
 

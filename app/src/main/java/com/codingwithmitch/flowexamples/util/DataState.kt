@@ -1,11 +1,10 @@
-package com.codingwithmitch.flowexamples
+package com.codingwithmitch.flowexamples.util
 
 const val UNKNOWN_ERROR = "Unknown Error"
 
 data class DataState<T>(
     var errorEvent: Event<String>? = null,
-    var loading: Loading = Loading(false),
-    var data: Event<T>? = null
+    var dataEvent: Event<T>? = null
 ) {
 
     companion object {
@@ -15,19 +14,7 @@ data class DataState<T>(
         ): DataState<T> {
             return DataState(
                 errorEvent = Event.errorEvent(errorMessage),
-                loading = Loading(false),
-                data = null
-            )
-        }
-
-        fun <T> loading(
-            isLoading: Boolean,
-            cachedData: T? = null
-        ): DataState<T> {
-            return DataState(
-                errorEvent = null,
-                loading = Loading(isLoading),
-                data = null
+                dataEvent = null
             )
         }
 
@@ -36,14 +23,12 @@ data class DataState<T>(
         ): DataState<T> {
             return DataState(
                 errorEvent = null,
-                loading = Loading(false),
-                data = Event.dataEvent(data)
+                dataEvent = Event.dataEvent(data)
             )
         }
     }
 }
 
-data class Loading(val isLoading: Boolean)
 
 /**
  * Used as a wrapper for data that is exposed via a LiveData that represents an event.
@@ -88,7 +73,10 @@ open class Event<out T>(private val content: T) {
 
         // we want an unknown error if the error message in empty
         fun errorEvent(errorMessage: String?): Event<String>?{
-            return Event(errorMessage?: UNKNOWN_ERROR)
+            return Event(
+                errorMessage
+                    ?: UNKNOWN_ERROR
+            )
         }
     }
 

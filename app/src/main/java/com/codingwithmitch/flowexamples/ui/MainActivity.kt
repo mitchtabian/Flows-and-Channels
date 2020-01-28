@@ -1,20 +1,17 @@
-package com.codingwithmitch.flowexamples
+package com.codingwithmitch.flowexamples.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.codingwithmitch.flowexamples.StateEvent.*
+import com.codingwithmitch.flowexamples.util.MyViewModelFactory
+import com.codingwithmitch.flowexamples.R
+import com.codingwithmitch.flowexamples.ui.state.StateEvent.*
+import com.codingwithmitch.flowexamples.repository.Repository
+import com.codingwithmitch.flowexamples.ui.viewmodel.MyViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.flow.*
-import kotlin.coroutines.CoroutineContext
 
 @FlowPreview
 @InternalCoroutinesApi
@@ -36,24 +33,47 @@ class MainActivity : AppCompatActivity() {
 
         subscribeObservers()
 
-
         get_object_1.setOnClickListener {
-            get_object_1.text = ""
-            viewModel.setStateEvent(GetObject1())
+            getObject1()
         }
 
         get_object_2.setOnClickListener {
-            get_object_2.text = ""
-            viewModel.setStateEvent(GetObject2())
+            getObject2()
         }
 
         get_object_3.setOnClickListener {
-            get_object_3.text = ""
-            viewModel.setStateEvent(GetObject3())
+            getObject3()
         }
+
     }
 
+
+    private fun getObject1(){
+        get_object_1.text = ""
+        viewModel.setStateEvent(GetObject1())
+    }
+
+    private fun getObject2(){
+        get_object_2.text = ""
+        viewModel.setStateEvent(GetObject2())
+    }
+    private fun getObject3(){
+        get_object_3.text = ""
+        viewModel.setStateEvent(GetObject3())
+    }
+
+
     private fun subscribeObservers(){
+
+        viewModel.activeRequestCounter.observe(this, Observer { activeJobCounter ->
+            setRequestCounter(activeJobCounter)
+            if(activeJobCounter > 0){
+                displayProgressBar(isLoading = true)
+            }
+            else{
+                displayProgressBar(isLoading = false)
+            }
+        })
 
         viewModel.viewState.observe(this, Observer { viewState ->
             if(viewState != null){
@@ -75,6 +95,10 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun setRequestCounter(counter: Int){
+        display_request_counter.text = counter.toString()
+    }
+
     private fun displayProgressBar(isLoading: Boolean){
         if(isLoading){
             progress_bar.visibility = View.VISIBLE
@@ -83,7 +107,10 @@ class MainActivity : AppCompatActivity() {
             progress_bar.visibility = View.INVISIBLE
         }
     }
+
 }
+
+
 
 
 
