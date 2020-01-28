@@ -1,12 +1,22 @@
 package com.codingwithmitch.flowexamples.ui.state
 
-data class ViewState(
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-    var isLoading: Boolean = false,
+
+@Parcelize
+data class ViewState(
 
     var object1: String? = null,
 
     var object2: String? = null,
 
     var object3: String? = null
-)
+) : Parcelable
+{
+
+    companion object{
+
+        const val VIEW_STATE_BUNDLE_KEY = "com.codingwithmitch.flowexamples.ui.state.ViewState"
+    }
+}

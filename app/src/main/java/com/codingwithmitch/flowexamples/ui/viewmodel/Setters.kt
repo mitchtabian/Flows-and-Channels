@@ -30,13 +30,6 @@ fun MyViewModel.setObject3(object3: String){
     setViewState(update)
 }
 
-@ExperimentalCoroutinesApi
-@InternalCoroutinesApi
-fun MyViewModel.setIsLoading(isLoading: Boolean = false){
-    val update = getCurrentViewStateOrNew()
-    update.isLoading = isLoading
-    setViewState(update)
-}
 
 
 
