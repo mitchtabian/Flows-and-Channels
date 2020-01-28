@@ -44,7 +44,9 @@ class MyViewModel
 
                     repository.getObject1()
                         .map { dataState ->
-                            val viewState = ViewState(object1 = dataState.data?.getContentIfNotHandled())
+                            val viewState = ViewState(
+                                object1 = dataState.data?.getContentIfNotHandled()
+                            )
                             DataState(
                                 data = Event(viewState),
                                 errorEvent = dataState.errorEvent,
@@ -71,7 +73,9 @@ class MyViewModel
                     repository.getObject2()
                         .map { dataState ->
 
-                            val viewState = ViewState(object2 = dataState.data?.getContentIfNotHandled())
+                            val viewState = ViewState(
+                                object2 = dataState.data?.getContentIfNotHandled()
+                            )
                             DataState(
                                 data = Event(viewState),
                                 errorEvent = dataState.errorEvent,
@@ -97,7 +101,9 @@ class MyViewModel
                     repository.getObject3()
                         .map { dataState ->
 
-                            val viewState = ViewState(object3 = dataState.data?.getContentIfNotHandled())
+                            val viewState = ViewState(
+                                object3 = dataState.data?.getContentIfNotHandled()
+                            )
                             DataState(
                                 data = Event(viewState),
                                 errorEvent = dataState.errorEvent,
