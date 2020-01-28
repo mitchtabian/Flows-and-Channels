@@ -55,24 +55,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun subscribeObservers(){
 
-        CoroutineScope(Main).launch{
-            viewModel.channel.asFlow().flowOn(Main).collect(object: FlowCollector<DataState<ViewState>>{
-
-                override suspend fun emit(value: DataState<ViewState>) {
-                    Log.d(TAG, "MainActivity: emit: ${value}")
-
-                    displayProgressBar(value.loading.isLoading)
-
-                    value.data?.getContentIfNotHandled()?.let { data ->
-                        viewModel.handleNewData(data)
-                    }
-                }
-
-            })
-        }
-
         viewModel.viewState.observe(this, Observer { viewState ->
             if(viewState != null){
+
+                displayProgressBar(viewState.isLoading)
 
                 viewState.object1?.let { object1 ->
                     get_object_1.text = object1
@@ -86,11 +72,6 @@ class MainActivity : AppCompatActivity() {
                     get_object_3.text = object3
                 }
             }
-        })
-
-
-        viewModel.dataState.observe(this, Observer { dataState ->
-
         })
     }
 

@@ -1,33 +1,52 @@
 package com.codingwithmitch.flowexamples
 
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.codingwithmitch.flowexamples.StateEvent.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
+@UseExperimental(FlowPreview::class)
 @InternalCoroutinesApi
 @ExperimentalCoroutinesApi
 class MyViewModel
-    constructor(
-        private val repository: Repository
-    ): ViewModel() {
+constructor(
+    private val repository: Repository
+): ViewModel() {
+
+    private val TAG: String = "AppDebug"
 
     val channel = ConflatedBroadcastChannel<DataState<ViewState>>()
 
-    private val _stateEvent: MutableLiveData<StateEvent> = MutableLiveData()
     private val _viewState: MutableLiveData<ViewState> = MutableLiveData()
 
     val viewState: LiveData<ViewState>
         get() = _viewState
 
-    val dataState: LiveData<DataState<String>> = Transformations
-        .switchMap(_stateEvent){ stateEvent ->
-            handleStateEvent(stateEvent)
+
+    init {
+        viewModelScope.launch{
+            channel
+                .asFlow()
+                .flowOn(Main)
+                .collect(object: FlowCollector<DataState<ViewState>>{
+
+                    override suspend fun emit(value: DataState<ViewState>) {
+                        Log.d(TAG, "MainActivity: emit: ${value}")
+
+                        setIsLoading(value.loading.isLoading)
+
+                        value.data?.getContentIfNotHandled()?.let { data ->
+                            handleNewData(data)
+                        }
+                    }
+                })
         }
+    }
 
     private fun offerToChannel(dataState: DataState<ViewState>){
         if(!channel.isClosedForSend){
@@ -35,10 +54,9 @@ class MyViewModel
         }
     }
 
-    private fun handleStateEvent(stateEvent: StateEvent?): LiveData<DataState<String>> {
+    fun setStateEvent(stateEvent: StateEvent){
 
-        return when(stateEvent){
-
+        when(stateEvent){
             is GetObject1 -> {
                 viewModelScope.launch {
 
@@ -63,8 +81,6 @@ class MyViewModel
                             }
                         })
                 }
-
-                repository.getObject1().asLiveData()
             }
 
             is GetObject2 -> {
@@ -92,7 +108,6 @@ class MyViewModel
                             }
                         })
                 }
-                repository.getObject2().asLiveData()
             }
 
             is GetObject3 -> {
@@ -120,14 +135,8 @@ class MyViewModel
                             }
                         })
                 }
-                repository.getObject3().asLiveData()
             }
-            else -> repository.getObject1().asLiveData()
         }
-    }
-
-    fun setStateEvent(stateEvent: StateEvent){
-        _stateEvent.value = stateEvent
     }
 
     fun setViewState(viewState: ViewState){
@@ -149,6 +158,12 @@ class MyViewModel
     fun setObject3(object3: String){
         val update = getCurrentViewStateOrNew()
         update.object3 = object3
+        setViewState(update)
+    }
+
+    fun setIsLoading(isLoading: Boolean = false){
+        val update = getCurrentViewStateOrNew()
+        update.isLoading = isLoading
         setViewState(update)
     }
 
