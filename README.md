@@ -1,6 +1,8 @@
 # Flows-and-Channels
 Playground for Kotlin Flows and Channels
 
+--------------------------
+
 I made this example as a playground to get familiar with Kotlin Channels and Flows.
 
 Additionally, I was hoping to solve an issue with the way I make requests using MVI architecture. I use a switchmap to detect new StateEvents which then execute the corresponding request in repository layer.
