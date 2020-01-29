@@ -24,11 +24,6 @@ constructor(
 
     private val dataChannel = ConflatedBroadcastChannel<DataState<ViewState>>()
 
-    private val _activeRequestCounter: MutableLiveData<Int> = MutableLiveData(0)
-
-    val activeRequestCounter: LiveData<Int>
-        get() = _activeRequestCounter
-
     private val _viewState: MutableLiveData<ViewState> = MutableLiveData()
 
     val viewState: LiveData<ViewState>
@@ -40,19 +35,15 @@ constructor(
     }
 
     private fun setupChannel(){
-        viewModelScope.launch{
-            dataChannel
-                .asFlow()
-                .collect{ dataState ->
-                    Log.d(TAG, "MyViewModel: emit: ${dataState}")
-
-                    dataState.dataEvent?.getContentIfNotHandled()?.let { data ->
-                        handleNewData(data)
-                        decrementActiveJobCounter()
-                    }
+        dataChannel
+            .asFlow()
+            .onEach{ dataState ->
+                Log.d(TAG, "MyViewModel: emit: ${dataState}")
+                dataState.dataEvent?.getContentIfNotHandled()?.let { data ->
+                    handleNewData(data)
                 }
-        }
-
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun offerToDataChannel(dataState: DataState<ViewState>){
@@ -65,81 +56,66 @@ constructor(
 
         when(stateEvent){
             is GetObject1 -> {
-                viewModelScope.launch {
-                    
-                    incrementActiveJobCounter()
-
+                if(!isJobAlreadyActive(GetObject1().toString())){
+                    addJobToCounter(GetObject1().toString())
                     repository.getObject1()
-                        .collect{ dataState ->
+                        .onEach { dataState ->
                             offerToDataChannel(dataState)
                         }
+                        .launchIn(viewModelScope)
                 }
             }
 
             is GetObject2 -> {
-                viewModelScope.launch {
-
-                    incrementActiveJobCounter()
-
+                if(!isJobAlreadyActive(GetObject2().toString())){
+                    addJobToCounter(GetObject2().toString())
                     repository.getObject2()
-                        .collect{ dataState ->
+                        .onEach { dataState ->
                             offerToDataChannel(dataState)
                         }
+                        .launchIn(viewModelScope)
                 }
             }
 
             is GetObject3 -> {
-
-                incrementActiveJobCounter()
-
-                viewModelScope.launch {
-
+                if(!isJobAlreadyActive(GetObject3().toString())){
+                    addJobToCounter(GetObject3().toString())
                     repository.getObject3()
-                        .collect{ dataState ->
+                        .onEach { dataState ->
                             offerToDataChannel(dataState)
                         }
+                        .launchIn(viewModelScope)
                 }
             }
         }
     }
 
-    private fun incrementActiveJobCounter(){
-        var counter = _activeRequestCounter.value
-        if(counter != null){
-            counter++
-        }
-        _activeRequestCounter.value = counter
-    }
-
-    private fun decrementActiveJobCounter(){
-        var counter = _activeRequestCounter.value
-        if(counter != null) {
-            counter--
-            if(counter < 0){
-                counter = 0
-            }
-        }
-        _activeRequestCounter.value = counter
-    }
+//    fun launchJob(jobFunction: suspend -> (), ){
+//
+//    }
 
 
     fun handleNewData(viewState: ViewState){
         when{
-            viewState.object1 != null -> setObject1(viewState.object1!!)
-            viewState.object2 != null -> setObject2(viewState.object2!!)
-            viewState.object3 != null -> setObject3(viewState.object3!!)
+            viewState.object1 != null -> {
+                removeJobFromCounter(GetObject1().toString())
+                setObject1(viewState.object1!!)
+            }
+            viewState.object2 != null -> {
+                removeJobFromCounter(GetObject2().toString())
+                setObject2(viewState.object2!!)
+            }
+            viewState.object3 != null -> {
+                removeJobFromCounter(GetObject3().toString())
+                setObject3(viewState.object3!!)
+            }
         }
     }
-
 
     fun setViewState(viewState: ViewState){
         _viewState.value = viewState
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.cancel()
-    }
 }
 
 

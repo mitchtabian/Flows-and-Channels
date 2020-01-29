@@ -11,8 +11,7 @@ import com.codingwithmitch.flowexamples.ui.state.StateEvent.*
 import com.codingwithmitch.flowexamples.repository.Repository
 import com.codingwithmitch.flowexamples.ui.state.ViewState
 import com.codingwithmitch.flowexamples.ui.state.ViewState.Companion.VIEW_STATE_BUNDLE_KEY
-import com.codingwithmitch.flowexamples.ui.viewmodel.MyViewModel
-import com.codingwithmitch.flowexamples.ui.viewmodel.getCurrentViewStateOrNew
+import com.codingwithmitch.flowexamples.ui.viewmodel.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 
@@ -60,24 +59,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        viewModel.clearActiveJobCounter()
         outState.putParcelable(VIEW_STATE_BUNDLE_KEY, viewModel.getCurrentViewStateOrNew())
         super.onSaveInstanceState(outState)
     }
 
     private fun subscribeObservers(){
 
-        viewModel.activeRequestCounter.observe(this, Observer { activeJobCounter ->
-            setRequestCounter(activeJobCounter)
-            if(activeJobCounter > 0){
-                displayProgressBar(isLoading = true)
-            }
-            else{
-                displayProgressBar(isLoading = false)
-            }
-        })
-
         viewModel.viewState.observe(this, Observer { viewState ->
             if(viewState != null){
+
+                displayProgressBar(viewModel.areAnyJobsActive())
+                setRequestCounter(viewModel.getNumActiveJobs())
 
                 viewState.object1?.let { object1 ->
                     get_object_1.text = object1
@@ -95,16 +88,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getObject1(){
-        get_object_1.text = ""
+        viewModel.setObject1("")
         viewModel.setStateEvent(GetObject1())
     }
 
     private fun getObject2(){
-        get_object_2.text = ""
+        viewModel.setObject2("")
         viewModel.setStateEvent(GetObject2())
     }
     private fun getObject3(){
-        get_object_3.text = ""
+        viewModel.setObject3("")
         viewModel.setStateEvent(GetObject3())
     }
 

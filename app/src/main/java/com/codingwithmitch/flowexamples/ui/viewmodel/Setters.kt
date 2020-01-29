@@ -30,7 +30,29 @@ fun MyViewModel.setObject3(object3: String){
     setViewState(update)
 }
 
+@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
+fun MyViewModel.clearActiveJobCounter(){
+    val update = getCurrentViewStateOrNew()
+    update.activeJobCounter.clear()
+    setViewState(update)
+}
 
+@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
+fun MyViewModel.addJobToCounter(stateEventName: String){
+    val update = getCurrentViewStateOrNew()
+    update.activeJobCounter.add(stateEventName)
+    setViewState(update)
+}
+
+@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
+fun MyViewModel.removeJobFromCounter(stateEventName: String){
+    val update = getCurrentViewStateOrNew()
+    update.activeJobCounter.remove(stateEventName)
+    setViewState(update)
+}
 
 
 

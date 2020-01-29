@@ -7,6 +7,8 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class ViewState(
 
+    var activeJobCounter: HashSet<String> = HashSet(),
+
     var object1: String? = null,
 
     var object2: String? = null,

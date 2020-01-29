@@ -14,6 +14,37 @@ fun MyViewModel.getCurrentViewStateOrNew(): ViewState {
     return value
 }
 
+@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
+fun MyViewModel.areAnyJobsActive(): Boolean{
+    val viewState = getCurrentViewStateOrNew()
+    return viewState.activeJobCounter.size > 0
+}
+
+
+@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
+fun MyViewModel.getNumActiveJobs(): Int {
+    val viewState = getCurrentViewStateOrNew()
+    return viewState.activeJobCounter.size
+}
+
+
+@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
+fun MyViewModel.isJobAlreadyActive(stateEventName: String): Boolean {
+    val viewState = getCurrentViewStateOrNew()
+    return viewState.activeJobCounter.contains(stateEventName)
+}
+
+
+
+
+
+
+
+
+
 
 
 
