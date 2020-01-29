@@ -56,43 +56,29 @@ constructor(
 
         when(stateEvent){
             is GetObject1 -> {
-                if(!isJobAlreadyActive(GetObject1().toString())){
-                    addJobToCounter(GetObject1().toString())
-                    repository.getObject1()
-                        .onEach { dataState ->
-                            offerToDataChannel(dataState)
-                        }
-                        .launchIn(viewModelScope)
-                }
+                launchJob(GetObject1(), repository.getObject1())
             }
 
             is GetObject2 -> {
-                if(!isJobAlreadyActive(GetObject2().toString())){
-                    addJobToCounter(GetObject2().toString())
-                    repository.getObject2()
-                        .onEach { dataState ->
-                            offerToDataChannel(dataState)
-                        }
-                        .launchIn(viewModelScope)
-                }
+                launchJob(GetObject2(), repository.getObject2())
             }
 
             is GetObject3 -> {
-                if(!isJobAlreadyActive(GetObject3().toString())){
-                    addJobToCounter(GetObject3().toString())
-                    repository.getObject3()
-                        .onEach { dataState ->
-                            offerToDataChannel(dataState)
-                        }
-                        .launchIn(viewModelScope)
-                }
+                launchJob(GetObject3(), repository.getObject3())
             }
         }
     }
 
-//    fun launchJob(jobFunction: suspend -> (), ){
-//
-//    }
+    fun launchJob(stateEvent: StateEvent, jobFunction: Flow<DataState<ViewState>> ){
+        if(!isJobAlreadyActive(stateEvent.toString())){
+            addJobToCounter(stateEvent.toString())
+            jobFunction
+                .onEach { dataState ->
+                    offerToDataChannel(dataState)
+                }
+                .launchIn(viewModelScope)
+        }
+    }
 
 
     fun handleNewData(viewState: ViewState){
