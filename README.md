@@ -18,7 +18,3 @@ val dataState: LiveData<DataState<ViewState>> = Transformations
 ```
 The problem with doing it this way is only one request can be executing at any given time. So any concurrency is pretty much out of the question without some serious refactoring. Everything else about this works great so I didn't want to trash it completely.
 
-## TODO
-I'm very new to Channels and Flows. Any feedback on my use case would be appreciated.
-1. Do I need to "cleanup" anything? Or will the channel be destroyed with the viewModelScope?
-2. What about the flows? Any cleanup required?
