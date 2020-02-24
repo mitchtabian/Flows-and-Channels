@@ -1,9 +1,8 @@
 package com.codingwithmitch.flowexamples.ui.viewmodel
 
-import com.codingwithmitch.flowexamples.ui.state.ViewState
+import com.codingwithmitch.flowexamples.util.ErrorState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-
 
 
 @ExperimentalCoroutinesApi
@@ -52,6 +51,19 @@ fun MyViewModel.removeJobFromCounter(stateEventName: String){
     val update = getCurrentViewStateOrNew()
     update.activeJobCounter.remove(stateEventName)
     setViewState(update)
+}
+
+
+@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
+fun MyViewModel.appendErrorState(errorState: ErrorState){
+    errorStack.add(errorState)
+}
+
+@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
+fun MyViewModel.clearError(index: Int){
+    errorStack.removeAt(index)
 }
 
 

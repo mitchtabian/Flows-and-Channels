@@ -2,6 +2,7 @@ package com.codingwithmitch.flowexamples.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
@@ -12,6 +13,7 @@ import com.codingwithmitch.flowexamples.repository.Repository
 import com.codingwithmitch.flowexamples.ui.state.ViewState
 import com.codingwithmitch.flowexamples.ui.state.ViewState.Companion.VIEW_STATE_BUNDLE_KEY
 import com.codingwithmitch.flowexamples.ui.viewmodel.*
+import com.codingwithmitch.flowexamples.util.ErrorState
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 
@@ -83,6 +85,22 @@ class MainActivity : AppCompatActivity() {
                 viewState.object3?.let { object3 ->
                     get_object_3.text = object3
                 }
+            }
+        })
+
+        viewModel.errorState.observe(this, Observer { errorState ->
+
+            errorState?.let {
+                displayErrorMessage(errorState)
+            }
+        })
+    }
+
+    private fun displayErrorMessage(errorState: ErrorState) {
+
+        displayErrorDialog(errorState.message, object: ErrorDialogCallback{
+            override fun clearError() {
+                viewModel.clearError(0)
             }
         })
     }

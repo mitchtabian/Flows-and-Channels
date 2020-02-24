@@ -65,4 +65,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
+    // material dialogs
+    def matieral_dialogs_version = "3.1.0"
+    implementation "com.afollestad.material-dialogs:core:$matieral_dialogs_version"
 }
