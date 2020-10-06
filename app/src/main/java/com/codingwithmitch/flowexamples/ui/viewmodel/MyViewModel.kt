@@ -11,7 +11,7 @@ import com.codingwithmitch.flowexamples.repository.Repository
 import com.codingwithmitch.flowexamples.util.ErrorStack
 import com.codingwithmitch.flowexamples.util.ErrorState
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.flow.*
 
 @UseExperimental(FlowPreview::class)
@@ -24,7 +24,7 @@ constructor(
 
     private val TAG: String = "AppDebug"
 
-    private val dataChannel = ConflatedBroadcastChannel<DataState<ViewState>>()
+    private val dataChannel = BroadcastChannel<DataState<ViewState>>()
 
     private val _viewState: MutableLiveData<ViewState> = MutableLiveData()
 
