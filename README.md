@@ -18,4 +18,4 @@ val dataState: LiveData<DataState<ViewState>> = Transformations
 ```
 The problem with doing it this way is only one request can be executing at any given time. So any concurrency is pretty much out of the question without some serious refactoring. Everything else about this works great so I didn't want to trash it completely.
 
-Turns out Flows and Channels are a great way to solve this issue.
+Turns out Flows are a great way to solve this issue.

@@ -15,7 +15,7 @@ import java.lang.Exception
 class Repository {
 
     fun getObject1(stateEvent: StateEvent): Flow<DataState<ViewState>> {
-
+        
         return flow {
 
             try{

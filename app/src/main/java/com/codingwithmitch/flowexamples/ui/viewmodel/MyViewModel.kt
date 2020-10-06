@@ -11,7 +11,6 @@ import com.codingwithmitch.flowexamples.repository.Repository
 import com.codingwithmitch.flowexamples.util.ErrorStack
 import com.codingwithmitch.flowexamples.util.ErrorState
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 
 @UseExperimental(FlowPreview::class)
@@ -24,8 +23,6 @@ constructor(
 
     private val TAG: String = "AppDebug"
 
-    private val dataChannel = ConflatedBroadcastChannel<DataState<ViewState>>()
-
     private val _viewState: MutableLiveData<ViewState> = MutableLiveData()
 
     val viewState: LiveData<ViewState>
@@ -34,32 +31,6 @@ constructor(
     val errorStack = ErrorStack()
 
     val errorState: LiveData<ErrorState> = errorStack.errorState
-
-    init {
-        setupChannel()
-    }
-
-    private fun setupChannel(){
-        dataChannel
-            .asFlow()
-            .onEach{ dataState ->
-                Log.d(TAG, "MyViewModel: emit: ${dataState}")
-                dataState.data?.let { data ->
-                    handleNewData(dataState.stateEvent, data)
-                }
-                dataState.error?.let { error ->
-                    handleNewError(dataState.stateEvent, error)
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
-
-    private fun offerToDataChannel(dataState: DataState<ViewState>){
-        if(!dataChannel.isClosedForSend){
-            dataChannel.offer(dataState)
-        }
-    }
 
     fun setStateEvent(stateEvent: StateEvent){
 
@@ -82,10 +53,15 @@ constructor(
         if(!isJobAlreadyActive(stateEvent.toString())){
             addJobToCounter(stateEvent.toString())
             jobFunction
-                .onEach { dataState ->
-                    offerToDataChannel(dataState)
+                .onEach{ dataState ->
+                    dataState.data?.let { data ->
+                        handleNewData(dataState.stateEvent, data)
+                    }
+                    dataState.error?.let { error ->
+                        handleNewError(dataState.stateEvent, error)
+                    }
                 }
-                .launchIn(viewModelScope)
+                .launchIn(viewModelScope )
         }
     }
 
