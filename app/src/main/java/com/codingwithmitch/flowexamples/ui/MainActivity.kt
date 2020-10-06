@@ -1,6 +1,5 @@
 package com.codingwithmitch.flowexamples.ui
 
-import MyViewModel
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View

@@ -1,3 +1,5 @@
+package com.codingwithmitch.flowexamples.ui.viewmodel
+
 import android.util.Log
 import androidx.lifecycle.*
 import com.codingwithmitch.flowexamples.util.DataState
@@ -5,7 +7,6 @@ import com.codingwithmitch.flowexamples.ui.state.StateEvent
 import com.codingwithmitch.flowexamples.ui.state.StateEvent.*
 import com.codingwithmitch.flowexamples.ui.state.ViewState
 import com.codingwithmitch.flowexamples.repository.Repository
-import com.codingwithmitch.flowexamples.ui.viewmodel.*
 import com.codingwithmitch.flowexamples.util.ErrorStack
 import com.codingwithmitch.flowexamples.util.ErrorState
 import kotlinx.coroutines.*
@@ -20,7 +21,6 @@ constructor(
 ): ViewModel() {
 
     private val TAG: String = "AppDebug"
-
 
     private val _viewState: MutableLiveData<ViewState> = MutableLiveData()
 
