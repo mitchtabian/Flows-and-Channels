@@ -1,7 +1,7 @@
 package com.codingwithmitch.flowexamples.ui.viewmodel
 
+import MyViewModel
 import com.codingwithmitch.flowexamples.ui.state.ViewState
-import com.codingwithmitch.flowexamples.util.ErrorState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 

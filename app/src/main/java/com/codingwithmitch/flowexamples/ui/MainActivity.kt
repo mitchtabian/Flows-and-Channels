@@ -1,8 +1,8 @@
 package com.codingwithmitch.flowexamples.ui
 
+import MyViewModel
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModelFactory: MyViewModelFactory by lazy{
         MyViewModelFactory(Repository())
     }
+
     private val viewModel: MyViewModel by viewModels{
         viewModelFactory
     }
